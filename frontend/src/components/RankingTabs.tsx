@@ -3,6 +3,7 @@ import type { SeasonsResponse } from '@uefa-ranking/contracts';
 import { getSeasons } from '../api/client.js';
 import { AssociationRanking } from './AssociationRanking.js';
 import { ClubRanking } from './ClubRanking.js';
+import { DataStatus } from './DataStatus.js';
 
 type Tab = 'clubs' | 'associations';
 
@@ -14,6 +15,7 @@ export function RankingTabs() {
   const [seasons, setSeasons] = useState<SeasonsResponse | null>(null);
   const [seasonId, setSeasonId] = useState('');
   const [tab, setTab] = useState<Tab>('clubs');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const clubTab = useRef<HTMLButtonElement>(null);
   const associationTab = useRef<HTMLButtonElement>(null);
@@ -24,8 +26,12 @@ export function RankingTabs() {
       if (!active) return;
       setSeasons(response);
       setSeasonId(response.activeSeasonId);
+      setLoading(false);
     }).catch((failure: unknown) => {
-      if (active) setError(errorMessage(failure));
+      if (active) {
+        setError(errorMessage(failure));
+        setLoading(false);
+      }
     });
     return () => { active = false; };
   }, []);
@@ -48,7 +54,8 @@ export function RankingTabs() {
   };
 
   return (
-    <section>
+    <section aria-busy={loading}>
+      {loading && <DataStatus loading />}
       {error && <p role="alert">{error}</p>}
       {seasons && (
         <>

@@ -13,7 +13,9 @@ const seasons = [
 const row = (id: string, name: string, coefficient: string | null, rank: number | null) => ({
   association: { id, name },
   rank, rankStatus: rank === null ? 'incomplete' : 'resolved',
-  previousRank: null, previousRankStatus: 'incomplete', movement: null,
+  previousRank: rank === null ? null : rank + 1,
+  previousRankStatus: rank === null ? 'incomplete' : 'resolved',
+  movement: rank === null ? null : 1,
   contributions: historicalSeasons.map((season, index) => ({
     seasonId: season.id,
     coefficient: coefficient === null ? null
@@ -88,9 +90,11 @@ describe('global association ranking view', () => {
     await user.click(screen.getByRole('tab', { name: 'Countries' }));
     const table = await screen.findByRole('table');
     expect(screen.getByLabelText('Season')).toHaveValue('2023-24');
-    expect(within(table).getAllByRole('columnheader')).toHaveLength(8);
+    expect(within(table).getAllByRole('columnheader')).toHaveLength(9);
     expect(within(table).getByRole('row', { name: /Caledonia/ })).toHaveTextContent('Unavailable');
-    expect(within(table).getByRole('row', { name: /Albion/ })).toHaveTextContent('15');
+    const albion = within(table).getByRole('row', { name: /Albion/ });
+    expect(albion).toHaveTextContent('15');
+    expect(within(albion).getByText('+1')).toHaveAccessibleName('Up 1 place');
   });
 
   it('expands competition subtotals accessibly and labels them separately from association coefficients', async () => {
@@ -131,5 +135,28 @@ describe('global association ranking view', () => {
     expect(screen.getByRole('tab', { name: 'Countries' })).toHaveFocus();
     expect(screen.getByRole('tabpanel')).toHaveAccessibleName('Countries');
     expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', 'associations-tab');
+  });
+
+  it('keeps global rank and movement unchanged when sorting season contributions', async () => {
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>().mockImplementation(async (input) => {
+      const url = new URL(String(input), 'http://localhost');
+      if (url.pathname.endsWith('/seasons')) return json({ activeSeasonId: '2023-24', seasons: [
+        { id: '2023-24', label: '2023/24' },
+      ], dataStatus });
+      if (url.pathname.endsWith('/association-rankings')) return json(historicalRanking);
+      return json({ error: { code: 'NOT_FOUND', message: 'Not found' } }, 404);
+    }));
+    const user = userEvent.setup();
+    render(<RankingTabs />);
+    await user.click(await screen.findByRole('tab', { name: 'Countries' }));
+    const table = await screen.findByRole('table');
+    const getRanksAndMovement = () => Object.fromEntries(within(table).getAllByRole('row').slice(1).map((current) => {
+      const cells = within(current).getAllByRole('cell');
+      return [within(current).getByRole('rowheader').textContent, [cells[0].textContent, cells[1].textContent]];
+    }).sort(([left], [right]) => String(left).localeCompare(String(right))));
+    const baseline = getRanksAndMovement();
+    await user.click(screen.getByRole('button', { name: /2023\/24 contribution/ }));
+    await user.click(screen.getByRole('button', { name: /2023\/24 contribution/ }));
+    expect(getRanksAndMovement()).toEqual(baseline);
   });
 });

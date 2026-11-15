@@ -3,6 +3,7 @@ import type { AssociationRankingResponse, SeasonsResponse } from '@uefa-ranking/
 import { getAssociationRanking, getSeasons } from '../api/client.js';
 import { AssociationDetails } from './AssociationDetails.js';
 import { DataStatus } from './DataStatus.js';
+import { RankMovement } from './RankMovement.js';
 
 type SortState = { seasonId: string; direction: 'asc' | 'desc' } | null;
 type Props = {
@@ -86,7 +87,7 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
   const status = ranking?.dataStatus ?? seasons?.dataStatus;
 
   return (
-    <section aria-labelledby="association-ranking-heading" className="space-y-4">
+    <section aria-labelledby="association-ranking-heading" aria-busy={loading} className="space-y-4">
       <h2 id="association-ranking-heading" className="text-xl font-semibold">Global association ranking</h2>
       <p>Five-season association coefficients from each season&apos;s association-specific coefficient input.</p>
       <DataStatus dataStatus={status} />
@@ -117,6 +118,7 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
                 <thead>
                   <tr>
                     <th scope="col">Rank</th>
+                    <th scope="col">Movement</th>
                     <th scope="col">Association</th>
                     {ranking.seasons.map((season) => {
                       const activeSort = sort?.seasonId === season.id;
@@ -139,6 +141,7 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
                   {rows.map((row) => (
                     <tr key={row.association.id} className="border-t align-top">
                       <td>{row.rank ?? (row.rankStatus === 'unresolved' ? 'Tie unresolved' : 'Unavailable')}</td>
+                      <td><RankMovement movement={row.movement} /></td>
                       <th scope="row">
                         <span className="block">{row.association.name}</span>
                         <AssociationDetails

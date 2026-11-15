@@ -89,14 +89,14 @@ The exact remaining external evidence is tracked in [missing-requirements.md](mi
 
 ### Tests
 
-- [ ] T087 [P] [US4] Add movement tests in `backend/tests/rank-movement.test.ts` for 5→3 (`+2`), 3→4 (`-1`), unchanged, missing/new entity, unresolved ties, independently ranked prior windows and stable movement after sorting.
-- [ ] T088 [P] [US4] Extend `frontend/tests/data-status.test.tsx` and add `frontend/tests/rank-movement.test.tsx` for accessible green/red/unchanged/unavailable labels, mock/live partial/stale/unavailable status, timestamps and asynchronous selection changes.
+- [x] T087 [P] [US4] Add movement tests in `backend/tests/rank-movement.test.ts` for 5→3 (`+2`), 3→4 (`-1`), unchanged, missing/new entity, unresolved ties, independently ranked prior windows and stable movement after sorting.
+- [x] T088 [P] [US4] Extend `frontend/tests/data-status.test.tsx` and add `frontend/tests/rank-movement.test.tsx` for accessible green/red/unchanged/unavailable labels, mock/live partial/stale/unavailable status, timestamps and asynchronous selection changes.
 
 ### Implementation
 
-- [ ] T089 [US4] Implement shared selected/prior rank comparison in `backend/src/domain/rank-movement.ts` and integrate `backend/src/domain/club-ranking.ts` and `backend/src/domain/association-ranking.ts`; return null when either rank is missing or unresolved.
-- [ ] T090 [US4] Implement `frontend/src/components/RankMovement.tsx` and integrate it immediately after rank in both ranking components; show `+N` green for improvement, `-N` red for decline, `0` unchanged, and an accessible non-color unavailable state.
-- [ ] T091 [US4] Complete source-status and request-state handling in `frontend/src/components/DataStatus.tsx`, `frontend/src/components/ClubRanking.tsx`, and `frontend/src/components/AssociationRanking.tsx` for mock/live, partial/stale/unavailable, timestamps, explicit failures and cancellation/ignoring stale responses.
+- [x] T089 [US4] Implement shared selected/prior rank comparison in `backend/src/domain/rank-movement.ts` and integrate `backend/src/domain/club-ranking.ts` and `backend/src/domain/association-ranking.ts`; return null when either rank is missing or unresolved.
+- [x] T090 [US4] Implement `frontend/src/components/RankMovement.tsx` and integrate it immediately after rank in both ranking components; show `+N` green for improvement, `-N` red for decline, `0` unchanged, and an accessible non-color unavailable state.
+- [x] T091 [US4] Complete source-status and request-state handling in `frontend/src/components/DataStatus.tsx`, `frontend/src/components/ClubRanking.tsx`, and `frontend/src/components/AssociationRanking.tsx` for mock/live, partial/stale/unavailable, timestamps, explicit failures and cancellation/ignoring stale responses.
 
 ## Phase 7: Cross-cutting validation and migration
 

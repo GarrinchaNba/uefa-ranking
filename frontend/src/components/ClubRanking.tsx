@@ -3,6 +3,7 @@ import type { ClubRankingResponse, SeasonsResponse } from '@uefa-ranking/contrac
 import { getClubRanking, getSeasons } from '../api/client.js';
 import { ClubDetails } from './ClubDetails.js';
 import { DataStatus } from './DataStatus.js';
+import { RankMovement } from './RankMovement.js';
 
 type SortState = { seasonId: string; direction: 'asc' | 'desc' } | null;
 type Props = {
@@ -86,7 +87,7 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
 
   const status = ranking?.dataStatus ?? seasons?.dataStatus;
   return (
-    <section aria-labelledby="club-ranking-heading" className="space-y-4">
+    <section aria-labelledby="club-ranking-heading" aria-busy={loading} className="space-y-4">
       <h2 id="club-ranking-heading" className="text-xl font-semibold">Global club ranking</h2>
       <p>Five-season club coefficients, with the applicable association minimum shown separately.</p>
       <DataStatus dataStatus={status} />
@@ -141,17 +142,7 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
                   {rows.map((club) => (
                     <tr key={club.clubId} className="border-t align-top">
                         <td>{club.rank ?? (club.rankStatus === 'unresolved' ? 'Tie unresolved' : 'Unavailable')}</td>
-                        <td>
-                          {club.movement === null ? <span aria-label="Movement unavailable">Unavailable</span> : (
-                            <span
-                              className={club.movement > 0 ? 'text-green-700' : club.movement < 0 ? 'text-red-700' : ''}
-                              aria-label={club.movement > 0 ? `Up ${club.movement} places`
-                                : club.movement < 0 ? `Down ${Math.abs(club.movement)} places` : 'Unchanged'}
-                            >
-                              {club.movement > 0 ? `+${club.movement}` : club.movement}
-                            </span>
-                          )}
-                        </td>
+                        <td><RankMovement movement={club.movement} /></td>
                         <th scope="row">
                           <span className="block">{club.name}</span>
                           <ClubDetails clubId={club.clubId} clubName={club.name} seasonId={ranking.season.id} />

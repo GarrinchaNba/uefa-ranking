@@ -42,6 +42,11 @@ describe('association ranking and competition details', () => {
       row.association.id === 'island')).toMatchObject({
       coefficient: '4', status: 'complete', rankStatus: 'resolved',
     });
+    const comparable = historical.body.associations.filter((row: {
+      rankStatus: string; previousRankStatus: string;
+    }) => row.rankStatus === 'resolved' && row.previousRankStatus === 'resolved');
+    expect(comparable.length).toBeGreaterThan(0);
+    for (const row of comparable) expect(row.movement).toBe(row.previousRank - row.rank);
     const active = await request(createApp()).get('/api/v1/association-rankings?seasonId=2026-27').expect(200);
     expect(active.body.associations.some((row: { rankStatus: string }) =>
       row.rankStatus === 'incomplete')).toBe(true);
@@ -54,10 +59,10 @@ describe('association ranking and competition details', () => {
     const sorted = await request(createApp())
       .get('/api/v1/association-rankings?seasonId=2023-24&sortSeasonId=2023-24&direction=asc').expect(200);
     expect(new Map(sorted.body.associations.map((row: {
-      association: { id: string }; rank: number | null;
-    }) => [row.association.id, row.rank]))).toEqual(new Map(base.body.associations.map((row: {
-      association: { id: string }; rank: number | null;
-    }) => [row.association.id, row.rank])));
+      association: { id: string }; rank: number | null; movement: number | null;
+    }) => [row.association.id, [row.rank, row.movement]]))).toEqual(new Map(base.body.associations.map((row: {
+      association: { id: string }; rank: number | null; movement: number | null;
+    }) => [row.association.id, [row.rank, row.movement]])));
     await request(createApp()).get('/api/v1/association-rankings?seasonId=not-a-season').expect(400);
     await request(createApp()).get('/api/v1/association-rankings?seasonId=2018-19').expect(404);
     await request(createApp()).get('/api/v1/association-rankings?seasonId=2023-24&direction=asc').expect(400);

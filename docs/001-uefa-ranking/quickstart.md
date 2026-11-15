@@ -22,7 +22,7 @@ npm run dev
 
 ## Current validation scope
 
-`npm run build` type-checks and builds the contracts, backend, and frontend. `npm test` runs backend and frontend tests, including club/association scoring, ranking, API and view. `npm run test:e2e` exercises the existing smoke journey and health endpoint. Install Chromium with `npx playwright install chromium` before running it; some Linux installations may additionally require Playwright's system dependencies.
+`npm run build` type-checks and builds the contracts, backend, and frontend. `npm test` runs backend and frontend tests, including club/association scoring, ranking, API and view. `npm run test:e2e` exercises the club-and-country smoke journey and health endpoint. Install Chromium with `npx playwright install chromium` before running it; some Linux installations may additionally require Playwright's system dependencies.
 
 The API response shapes and error conditions are specified in [contracts/api.md](contracts/api.md), and the domain states are defined in [data-model.md](data-model.md). Feature-level acceptance scenarios remain planned until the user-story tasks are implemented.
 
@@ -37,4 +37,4 @@ The API response shapes and error conditions are specified in [contracts/api.md]
 
 ## Follow-on acceptance scenarios
 
-Shared association movement/reliability behavior, real-data reconstruction, and official UEFA coefficient comparisons remain open in [tasks.md](tasks.md). Their exact evidence requirements are listed in [missing-requirements.md](missing-requirements.md).
+Real-data reconstruction, official UEFA coefficient comparisons, broader cross-story browser journeys, and the responsive visual redesign remain open in [tasks.md](tasks.md). Their exact evidence requirements are listed in [missing-requirements.md](missing-requirements.md).

@@ -29,7 +29,7 @@ export function DataStatus({ dataStatus, error, loading = false }: DataStatusPro
   const modeLabel = dataStatus.mode === 'mock' ? 'Mock data' : 'Live data';
 
   return (
-    <div aria-label="Data status" className="text-sm text-slate-600">
+    <div aria-label="Data status" aria-live="polite" className="text-sm text-slate-600">
       <p>
         <span>{modeLabel}</span>
         {' · '}

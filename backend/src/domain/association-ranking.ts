@@ -2,6 +2,7 @@ import type { AssociationRankingResponse, RankingSnapshot } from '@uefa-ranking/
 import { decimalToMilli, milliToDecimal } from './decimal.js';
 import { rankingPeriods } from './periods.js';
 import { scoreAssociationSeason } from './association-scoring.js';
+import { rankMovement } from './rank-movement.js';
 
 type AssociationInput = {
   associationId: string;
@@ -109,16 +110,13 @@ export function associationRanking(
   const previousTieBreakSupported = snapshot.ruleSupport.find((entry) => entry.seasonId === previousSeason)?.ranking === 'verified';
   const currentRanks = rankPeriod(currentInputs, currentTieBreakSupported);
   const previousRanks = rankPeriod(previousInputs, previousTieBreakSupported);
+  const movements = rankMovement(currentRanks, previousRanks);
   const associations = currentInputs.map((input) => {
     const rank = currentRanks.get(input.associationId)!;
-    const previousRank = previousRanks.get(input.associationId) ?? { rank: null, rankStatus: 'incomplete' as const };
     return {
       association: snapshot.associations.find((entry) => entry.id === input.associationId)!,
       ...rank,
-      previousRank: previousRank.rank,
-      previousRankStatus: previousRank.rankStatus,
-      movement: rank.rankStatus === 'resolved' && previousRank.rankStatus === 'resolved'
-        ? previousRank.rank! - rank.rank! : null,
+      ...movements.get(input.associationId)!,
       contributions: input.contributions,
       coefficient: input.coefficient,
       status: input.status,

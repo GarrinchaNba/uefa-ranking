@@ -2,6 +2,7 @@ import type { ClubRankingResponse, RankingSnapshot } from '@uefa-ranking/contrac
 import { decimalToMilli } from './decimal.js';
 import { clubFiveSeasonCoefficients } from './five-season.js';
 import { rankingPeriods } from './periods.js';
+import { rankMovement } from './rank-movement.js';
 
 type RankedInput = ReturnType<typeof clubFiveSeasonCoefficients>[number];
 
@@ -79,21 +80,18 @@ export function clubRanking(
     ? clubFiveSeasonCoefficients(snapshot, priorSeason) : [];
   const currentRanks = assignRanks(currentInputs, snapshot).ranks;
   const previousRanks = assignRanks(previousInputs, snapshot).ranks;
+  const movements = rankMovement(currentRanks, previousRanks);
   const associations = new Map(snapshot.associations.map((association) => [association.id, association]));
   const clubs = currentInputs.map((input) => {
     const currentRank = currentRanks.get(input.clubId)!;
-    const previousRank = previousRanks.get(input.clubId) ?? { rank: null, rankStatus: 'incomplete' as const };
-    const movement = currentRank.rankStatus === 'resolved' && previousRank.rankStatus === 'resolved'
-      ? previousRank.rank! - currentRank.rank! : null;
+    const movement = movements.get(input.clubId)!;
     return {
       clubId: input.clubId,
       name: snapshot.clubs.find((club) => club.id === input.clubId)!.name,
       association: input.associationId === null ? null : associations.get(input.associationId) ?? null,
       rank: currentRank.rank,
       rankStatus: currentRank.rankStatus,
-      previousRank: previousRank.rank,
-      previousRankStatus: previousRank.rankStatus,
-      movement,
+      ...movement,
       contributions: input.contributions,
       clubPointsSum: input.clubPointsSum,
       associationCoefficient: input.associationCoefficient,
