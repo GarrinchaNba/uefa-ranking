@@ -1,0 +1,25 @@
+{
+  "name": "uefa-ranking",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@9.2.0",
+  "engines": {
+    "node": ">=22.22.1 <23",
+    "npm": "9.2.0"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "packages/contracts"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @uefa-ranking/contracts && concurrently --kill-others --names backend,frontend \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w @uefa-ranking/contracts && npm run build -w @uefa-ranking/backend && npm run build -w @uefa-ranking/frontend",
+    "test": "npm run build -w @uefa-ranking/contracts && npm run test -w @uefa-ranking/backend && npm run test -w @uefa-ranking/frontend",
+    "test:e2e": "npm run test:e2e -w frontend"
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1",
+    "typescript": "5.9.3"
+  }
+}

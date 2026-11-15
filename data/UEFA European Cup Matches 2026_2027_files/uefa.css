@@ -1,0 +1,20 @@
+
+body {background-color: #EEEEEE; color: #000000; margin: 10px;
+      font-family: verdana, sans-serif; font-size: 10pt; }
+td   {font-family: verdana, sans-serif; font-size: 10pt; }
+th   {font-family: verdana, sans-serif; font-size: 10pt; }
+h3   {font-family: verdana, sans-serif; font-size: 12pt; }
+h2   {font-family: verdana, sans-serif; font-size: 14pt; }
+small{font-family: verdana, sans-serif; font-size: 8pt; }
+pre  {font-family: consolas, monospace; font-size: 10pt; }
+
+a:link    {color: #0000EE; }
+a:visited {color: #0000EE; }
+a:hover   {background-color: #FFFFBB; color: #000000; text-decoration: none; }
+
+a.button:link    {background-color: #EEEEEE; color: #000099; text-decoration: none;
+                  border: 1px solid #999999; padding: 0 5px; }
+a.button:visited {background-color: #EEEEEE; color: #000099; text-decoration: none;
+                  border: 1px solid #999999; padding: 0 5px; }
+a.button:hover   {background-color: #FFFFBB; color: #000000; text-decoration: none;
+                  border: 1px solid #990000; padding: 0 5px; }

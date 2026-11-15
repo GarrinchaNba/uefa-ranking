@@ -1,0 +1,176 @@
+Annex D Coefficient Ranking System
+D.1 System overview
+UEFA calculates the coefficient of each club and association each season based on
+the clubs' results in the UEFA Champions League, UEFA Europa League and UEFA
+Conference League. The season coefficients from the five most recent seasons are
+used to determine the positions of the associations in the access list (association
+coefficient) and to rank the clubs for seeding purposes (sporting club coefficient). In
+addition, the season coefficients from the ten most recent seasons are used to
+calculate revenue club coefficients for revenue distribution purposes only.
+D.2 Reference periods for rankings
+The associations' positions in the 2024/25 UEFA Champions League, UEFA Europa
+League and UEFA Conference League access list (Annex A) are determined on the
+basis of the five-season association coefficients established at the end of the
+2022/23 season, i.e. the cumulative total of the associations' season coefficients
+from seasons 2018/19 to 2022/23 inclusive.
+The five-season sporting club coefficients for the 2024/25 UEFA Champions League,
+UEFA Europa League and UEFA Conference League are established before the start
+of the 2024/25 season, on the basis of each club's season coefficients from seasons
+2019/20 to 2023/24 inclusive.
+The ten-season revenue club coefficients for the 2024/25 UEFA Champions League,
+UEFA Europa League and UEFA Conference League are established before the start
+of the 2024/25 season, on the basis of each club's season coefficients from seasons
+2014/15 to 2023/24 inclusive.
+D.3 Association coefficient calculation
+The season coefficient of an association is calculated by adding up the points
+obtained by all its clubs in a given season of the UEFA Champions League, UEFA
+Europa League and UEFA Conference League and then dividing the total by the
+number of clubs from that association that took part in the three UEFA club
+competitions in question.
+Points are awarded as follows:
+a. 2 points for a win (1 point for qualifying and play-off matches);
+b. 1 point for a draw (0.5 points for qualifying and play-off matches);
+c. 0 points for a defeat.
+If a club refused to enter a UEFA competition for which it qualified or was excluded
+from or not admitted to the competition and not replaced by another club from the
+same association, the association's coefficient is calculated by dividing the total
+number of points obtained by its clubs by the number of clubs the association was
+entitled to enter according to the access list
+
+D.4 Sporting club coefficient calculation
+The season coefficient of a club is calculated by adding up the total number of
+points it obtained in a given season of the UEFA Champions League, UEFA Europa
+League or UEFA Conference League in accordance with this Annex D of the
+competition regulations for that season. A club’s five-season sporting coefficient is
+the cumulative total of its five season coefficients from the reference period
+stipulated in Annex D.2, or 20% of its association’s five-season association
+coefficient, whichever is higher. Points awarded each season are in accordance with
+the relevant competition regulations for that specific season, so Annex D.4.1 to
+Annex D.4.3 apply only to the awarding of points in the 2023/24 season.
+D.4.1 Points awarded in the UEFA Champions League
+a. Qualifying phase and play-offs:
+▪ Clubs that are eliminated in the UEFA Champions League qualifying phase or
+play-offs are awarded points in the UEFA Europa League or UEFA Conference
+League (see Annex D.4.2 and Annex D.4.3).
+b. League phase onwards (except knockout phase play-offs):
+▪ 2 points for a win;
+▪ 1 point for a draw;
+▪ 0 points for a defeat.
+D.4.2 Points awarded in the UEFA Europa League
+a. Qualifying phase and play-offs:
+▪ Clubs that are eliminated in the UEFA Europa League qualifying phase or playoffs are awarded points in the UEFA Conference League (see Annex D.4.3).
+b. League phase onwards (except knockout phase play-offs):
+▪ 2 points for a win;
+▪ 1 point for a draw;
+▪ 0 points for a defeat.
+c. Guaranteed minimum:
+Clubs are guaranteed a minimum of three points in the league phase of the UEFA
+Europa League even if the number of points actually obtained during this stage is
+lower. This guaranteed minimum is not added to points actually obtained in the
+league phase and is not included in the association coefficient calculation.
+D.4.3 Points awarded in the UEFA Conference League
+a. Qualifying phase and play-offs:
+▪ 1 point awarded to each club eliminated in the first qualifying round;
+▪ 1.5 points awarded to each club eliminated in the second qualifying round;
+▪ 2 points awarded to each club eliminated in the third qualifying round;
+▪ 2.5 points awarded to each club eliminated in the play-offs.
+b. League phase onwards (except knockout phase play-offs):
+▪ 2 points for a win;
+
+▪ 1 point for a draw;
+▪ 0 points for a defeat.
+c. Guaranteed minimum:
+Clubs are guaranteed a minimum of 2.5 points in the league phase of the UEFA
+Conference League, even if the number of points actually obtained during this
+stage is lower. This guaranteed minimum is not added to points actually
+obtained in the league phase and is not included in the association coefficient
+calculation.
+D.5 Bonus points
+Clubs are awarded the following bonus points based on their final position in the
+league phase rankings:
+League phase
+ranking
+UEFA Champions
+League (UCL)
+UEFA Europa
+League (UEL)
+UEFA Conference
+League (UECL)
+1 12.000 6.000 4.000
+2 11.750 5.750 3.750
+3 11.500 5.500 3.500
+4 11.250 5.250 3.250
+5 11.000 5.000 3.000
+6 10.750 4.750 2.750
+7 10.500 4.500 2.500
+8 10.250 4.250 2.250
+9 10.000 4.000 2.000
+10 9.750 3.750 1.875
+11 9.500 3.500 1.750
+12 9.250 3.250 1.625
+13 9.000 3.000 1.500
+14 8.750 2.750 1.375
+15 8.500 2.500 1.250
+16 8.250 2.250 1.125
+17 8.000 2.000 1.000
+18 7.750 1.750 0.875
+19 7.500 1.500 0.750
+20 7.250 1.250 0.625
+21 7.000 1.000 0.500
+22 6.750 0.750 0.375
+23 6.500 0.500 0.250
+24 6.250 0.250 0.125
+25 6.000 0.000 0.000
+26 6.000 0.000 0.000
+27 6.000 0.000 0.000
+28 6.000 0.000 0.000
+29 6.000 0.000 0.000
+30 6.000 0.000 0.000
+31 6.000 0.000 0.000
+32 6.000 0.000 0.000
+33 6.000 0.000 0.000
+34 6.000 0.000 0.000
+35 6.000 0.000 0.000
+36 6.000 0.000 0.000
+Clubs that reach the round of 16, quarter-finals, semi-finals or final are awarded 1.5
+extra points for each such round in the UEFA Champions League, 1 extra point for
+each such round in the UEFA Europa League, and 0.5 extra points for each such
+round in the UEFA Conference League.
+These bonus points are also included in the association coefficient calculation.
+D.6 Revenue club coefficient calculation
+A club’s revenue club coefficient is calculated using the same season coefficients as
+for the sporting club coefficient (see Annex D.4), but with a ten-season instead of a
+five-season reference period as stipulated in Annex D.2
+
+A club’s ten-season revenue coefficient is the cumulative total of its ten season
+coefficients from the reference period stipulated in Annex D.2, or 20% of the
+equivalent ten-season total of its association's season coefficients, whichever is
+higher.
+D.7 Calculation principles
+Match points are awarded based on the final scores ratified by UEFA. Penalty shootouts do not count.
+Coefficients are calculated to the thousandth and not rounded up.
+If competition rounds are changed and matches are played as single-leg instead of
+two-legged ties, the points awarded under Annex D.3, Annex D.4.1.b, Annex D.4.2.b
+and Annex D.4.3.b are adapted as follows:
+a. 3 points for a win in regular time or extra time (1.5 points for qualifying and playoff matches);
+b. 2 points for a draw in extra time (1 point for qualifying and play-off matches);
+c. 1 point for a defeat in regular time or extra time (0.5 points for qualifying and
+play-off matches).
+This does not apply to the final of the UEFA Champions League, UEFA Europa
+League or UEFA Conference League.
+D.8 Equal coefficients
+If two or more clubs are ranked equally, the following criteria are applied, in this
+order, to determine their final rankings:
+• their coefficients in the most recent of the seasons on which the rankings are
+based;
+• their coefficients in the next most recent season in which they are not equal;
+• the association coefficient of the club’s respective association;
+• their position in the domestic championship in the most recent season.
+If two or more associations are ranked equally, the following criteria are applied, in
+this order, to determine their final rankings:
+• their coefficients in the most recent of the seasons on which the rankings are
+based;
+• their coefficients in the next most recent season in which they are not equal.
+D.9 Final decisions
+The UEFA administration takes final decisions on any matters not provided for in
+this annex.

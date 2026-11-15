@@ -1,0 +1,17 @@
+
+body {background-color: #FFFFFF; }
+table.t1 {border-collapse: collapse; width: 100%; }
+table.t1 th {padding: 0; border: 1px solid #FFFFFF; }
+table.t1 td {padding: 2px; border: 1px solid #FFFFFF; }
+table.t1 tr {background-color: #F4F4F4; }
+
+.result {text-align: center; }
+.pstext {text-align: right; }
+.psresult {text-align: center; background-color: #CCFFCC; }
+.forfeit {text-align: center; background-color: #BBDDFF; }
+.cupheader {background-color: #BBDDFF; border: 2px solid #999999; padding: 1em 0; margin: 0; font-size: 1.2em; }
+.roundheader {background-color: #FFFFCC; border: 2px solid #999999; padding: 1em 0; margin: 0; font-size: 1em; }
+.flex-container {display: flex; justify-content: space-between; }
+
+hr {color: black; background: black; height: 1px; border: none; }
+pre {margin: 0; padding: 0; overflow: auto; }
