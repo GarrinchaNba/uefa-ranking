@@ -64,7 +64,7 @@ describe('global club ranking view', () => {
     expect(within(table).getAllByRole('columnheader')).toHaveLength(12);
     const rovers = within(table).getByRole('row', { name: /Albion Rovers/ });
     expect(within(rovers).getByText('+2')).toHaveAccessibleName('Up 2 places');
-    expect(within(rovers).getByText('8 (applied)')).toBeVisible();
+    expect(within(rovers).getByText('(applied)')).toBeVisible();
     expect(within(rovers).getByText('Assumed fixture value for this MVP.')).toBeVisible();
   });
 

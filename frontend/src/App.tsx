@@ -1,9 +1,13 @@
 import { RankingTabs } from './components/RankingTabs.js';
+import { ThemeToggle } from './components/ThemeToggle.js';
 
 export function App() {
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-8">
-      <h1 className="text-3xl font-bold">UEFA Club and Association Rankings</h1>
+    <main className="app-shell">
+      <header className="app-header">
+        <h1 className="app-title">UEFA Club and Association Rankings</h1>
+        <ThemeToggle />
+      </header>
       <RankingTabs />
     </main>
   );

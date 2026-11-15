@@ -87,16 +87,16 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
 
   const status = ranking?.dataStatus ?? seasons?.dataStatus;
   return (
-    <section aria-labelledby="club-ranking-heading" aria-busy={loading} className="space-y-4">
+    <section aria-labelledby="club-ranking-heading" aria-busy={loading} className="ranking-section space-y-4">
       <h2 id="club-ranking-heading" className="text-xl font-semibold">Global club ranking</h2>
-      <p>Five-season club coefficients, with the applicable association minimum shown separately.</p>
+      <p className="ranking-intro">Five-season club coefficients, with the applicable association minimum shown separately.</p>
       <DataStatus dataStatus={status} />
       {loading && <DataStatus loading />}
       {error && <DataStatus error={error} />}
       {seasons && (
-        <label className="grid w-fit gap-1">
+        <label className="season-picker">
           Season
-          <select className="rounded border p-2" value={seasonId} onChange={(event) => {
+          <select value={seasonId} onChange={(event) => {
             setRanking(null);
             chooseSeason(event.target.value);
           }}>
@@ -106,11 +106,34 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
       )}
       {ranking && (
         <>
-          <p role="status">{ranking.explanation}</p>
-          {ranking.provisional && <p><strong>Provisional:</strong> current-season rolling ranking, not UEFA's fixed seeding ranking.</p>}
+          <p role="status" className="ranking-note">{ranking.explanation}</p>
+          {ranking.provisional && <p className="ranking-note"><strong>Provisional:</strong> current-season rolling ranking, not UEFA's fixed seeding ranking.</p>}
           {rows.length === 0 ? <p>No eligible clubs in this five-season period.</p> : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <>
+            <div className="mobile-sort-controls" aria-label="Sort club ranking">
+              <label>
+                Sort by season contribution
+                <select
+                  aria-label="Sort by season contribution"
+                  value={sort?.seasonId ?? ranking.seasons[4].id}
+                  onChange={(event) => setSort({ seasonId: event.target.value, direction: 'desc' })}
+                >
+                  {ranking.seasons.map((season) => <option key={season.id} value={season.id}>{season.label}</option>)}
+                </select>
+              </label>
+              <button
+                type="button"
+                aria-label={`Sort ${sort?.direction === 'asc' ? 'descending' : 'ascending'}`}
+                onClick={() => setSort((current) => ({
+                  seasonId: current?.seasonId ?? ranking.seasons[4].id,
+                  direction: current?.direction === 'asc' ? 'desc' : 'asc',
+                }))}
+              >
+                {sort?.direction === 'asc' ? 'Ascending' : 'Descending'}
+              </button>
+            </div>
+            <div className="table-scroll">
+              <table className="ranking-table">
                 <caption className="text-left font-semibold">
                   Club coefficients, {ranking.seasons[0].label}–{ranking.season.label}
                 </caption>
@@ -145,30 +168,82 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
                         <td><RankMovement movement={club.movement} /></td>
                         <th scope="row">
                           <span className="block">{club.name}</span>
-                          <ClubDetails clubId={club.clubId} clubName={club.name} seasonId={ranking.season.id} />
+                          <ClubDetails clubId={club.clubId} clubName={club.name} seasonId={ranking.season.id} idSuffix="table" />
                         </th>
                         <td>{club.association?.name ?? 'Unknown'}</td>
                         {club.contributions.map((contribution) => (
                           <td key={contribution.seasonId}>
                             {contribution.points ?? 'Unavailable'}
-                            {contribution.status === 'partial' ? ' (partial)' : ''}
+                              {contribution.status === 'partial' ? <span className="partial-label"> (partial)</span> : ''}
                           </td>
                         ))}
                         <td>{club.clubPointsSum ?? 'Unavailable'}</td>
                         <td>
                           {club.associationMinimum ?? 'Unavailable'}
-                          {club.minimumApplied === true ? ' (applied)' : club.minimumApplied === false ? ' (not applied)' : ''}
-                        </td>
-                        <td>
-                          {club.coefficient ?? 'Unavailable'}
-                          {club.reason && <p className="max-w-72 text-sm text-amber-800">{club.reason}</p>}
-                          {club.status === 'incomplete' && <span className="text-sm">Incomplete</span>}
-                        </td>
+                            {club.minimumApplied === true ? <span className="partial-label"> (applied)</span>
+                              : club.minimumApplied === false ? <span className="partial-label"> (not applied)</span> : ''}
+                          </td>
+                          <td>
+                            <span className="coefficient-value">{club.coefficient ?? 'Unavailable'}</span>
+                            {club.reason && <p className="reason-text">{club.reason}</p>}
+                            {club.status === 'incomplete' && <span className="partial-label">Incomplete</span>}
+                          </td>
                       </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            <div className="ranking-cards">
+              {rows.map((club) => (
+                <article className="ranking-card" key={club.clubId} aria-label={`${club.name} ranking details`}>
+                  <div className="ranking-card-heading">
+                    <div className="ranking-card-identity">
+                      <h3>{club.name}</h3>
+                      <p>{club.association?.name ?? 'Unknown association'}</p>
+                    </div>
+                    <div className="ranking-card-rank">
+                      <strong>{club.rank ?? '—'}</strong>
+                      <span>{club.rankStatus === 'unresolved' ? 'Tie unresolved' : club.rank === null ? 'Rank unavailable' : 'Rank'}</span>
+                    </div>
+                    <div className="ranking-card-movement">
+                      Movement: <RankMovement movement={club.movement} />
+                    </div>
+                  </div>
+                  <dl className="contribution-list">
+                    {club.contributions.map((contribution) => (
+                      <div className="contribution-item" key={contribution.seasonId}>
+                          <dt>{ranking.seasons.find((season) => season.id === contribution.seasonId)?.label} contribution</dt>
+                          <dd>
+                            {contribution.points ?? 'Unavailable'}
+                            {contribution.status === 'partial' && <span className="partial-label"> (partial)</span>}
+                          </dd>
+                      </div>
+                    ))}
+                    <div className="contribution-item">
+                      <dt>Club sum</dt>
+                      <dd>{club.clubPointsSum ?? 'Unavailable'}</dd>
+                    </div>
+                    <div className="contribution-item">
+                      <dt>Association minimum</dt>
+                      <dd>
+                          {club.associationMinimum ?? 'Unavailable'}
+                          {club.minimumApplied === true ? ' (applied)' : club.minimumApplied === false ? ' (not applied)' : ''}
+                      </dd>
+                    </div>
+                    <div className="contribution-item contribution-item-primary">
+                      <dt>Final coefficient</dt>
+                      <dd>{club.coefficient ?? 'Unavailable'}</dd>
+                    </div>
+                  </dl>
+                  <p className="partial-label">Status: {club.status}</p>
+                  {club.reason && <p className="reason-text">{club.reason}</p>}
+                  <div className="card-detail-action">
+                    <ClubDetails clubId={club.clubId} clubName={club.name} seasonId={ranking.season.id} idSuffix="card" />
+                  </div>
+                </article>
+              ))}
+            </div>
+            </>
           )}
         </>
       )}

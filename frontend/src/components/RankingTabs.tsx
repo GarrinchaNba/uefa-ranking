@@ -59,7 +59,7 @@ export function RankingTabs() {
       {error && <p role="alert">{error}</p>}
       {seasons && (
         <>
-          <div role="tablist" aria-label="Ranking type">
+          <div role="tablist" aria-label="Ranking type" className="ranking-tabs">
             <button
               ref={clubTab}
               id="clubs-tab"

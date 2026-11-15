@@ -15,11 +15,11 @@ const qualityLabels: Record<DataStatusValue['quality'], string> = {
 
 export function DataStatus({ dataStatus, error, loading = false }: DataStatusProps) {
   if (loading) {
-    return <p role="status">Loading ranking data...</p>;
+    return <p role="status" className="status-message">Loading ranking data...</p>;
   }
 
   if (error) {
-    return <p role="alert">{error}</p>;
+    return <p role="alert" className="status-message">{error}</p>;
   }
 
   if (!dataStatus) {
@@ -29,7 +29,7 @@ export function DataStatus({ dataStatus, error, loading = false }: DataStatusPro
   const modeLabel = dataStatus.mode === 'mock' ? 'Mock data' : 'Live data';
 
   return (
-    <div aria-label="Data status" aria-live="polite" className="text-sm text-slate-600">
+    <div aria-label="Data status" aria-live="polite" className="data-status">
       <p>
         <span>{modeLabel}</span>
         {' · '}

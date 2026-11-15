@@ -2,7 +2,7 @@ type Props = { movement: number | null };
 
 export function RankMovement({ movement }: Props) {
   if (movement === null) {
-    return <span aria-label="Movement unavailable">Unavailable</span>;
+    return <span className="movement-unavailable" aria-label="Movement unavailable">Unavailable</span>;
   }
   const distance = Math.abs(movement);
   const places = distance === 1 ? 'place' : 'places';
@@ -10,7 +10,7 @@ export function RankMovement({ movement }: Props) {
     : movement < 0 ? `Down ${distance} ${places}` : 'Unchanged';
   return (
     <span
-      className={movement > 0 ? 'text-green-700' : movement < 0 ? 'text-red-700' : ''}
+      className={movement > 0 ? 'movement-up' : movement < 0 ? 'movement-down' : 'movement-same'}
       aria-label={label}
     >
       {movement > 0 ? `+${movement}` : movement}

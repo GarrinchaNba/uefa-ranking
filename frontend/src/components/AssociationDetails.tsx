@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 import type { AssociationSeasonDetailsResponse } from '@uefa-ranking/contracts';
 import { getAssociationSeasonDetails } from '../api/client.js';
 
-type Props = { associationId: string; associationName: string; seasonId: string };
+type Props = { associationId: string; associationName: string; seasonId: string; idSuffix?: string };
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Unable to load association season details';
 }
 
-export function AssociationDetails({ associationId, associationName, seasonId }: Props) {
+export function AssociationDetails({ associationId, associationName, seasonId, idSuffix = 'details' }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [detail, setDetail] = useState<AssociationSeasonDetailsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const panelId = `association-details-${associationId}`;
+  const panelId = `association-details-${associationId}-${idSuffix}`;
 
   useEffect(() => {
     if (!expanded) return undefined;
@@ -40,7 +40,7 @@ export function AssociationDetails({ associationId, associationName, seasonId }:
     <>
       <button
         type="button"
-        className="underline"
+        className="detail-toggle"
         aria-expanded={expanded}
         aria-controls={panelId}
         onClick={() => setExpanded((value) => !value)}
@@ -49,7 +49,7 @@ export function AssociationDetails({ associationId, associationName, seasonId }:
       </button>
       <section
         id={panelId}
-        className="mt-2 min-w-72 space-y-2"
+        className="detail-panel"
         aria-busy={loading}
         aria-label={`${associationName} ${seasonId} competition details`}
         hidden={!expanded}
@@ -63,7 +63,7 @@ export function AssociationDetails({ associationId, associationName, seasonId }:
                 <p>{detail.explanation}</p>
                 {detail.groups.length === 0 && <p>No competition groups are available.</p>}
                 {detail.groups.map((group) => (
-                  <section key={group.competition.id} aria-label={group.competition.name}>
+                  <section key={group.competition.id} aria-label={group.competition.name} className="detail-group">
                     <h3 className="font-semibold">{group.competition.name}</h3>
                     <p>
                       Club-point subtotal: {group.total ?? 'Unavailable'}

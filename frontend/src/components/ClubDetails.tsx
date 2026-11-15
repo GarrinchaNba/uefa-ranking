@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react';
 import type { ClubSeasonDetailsResponse } from '@uefa-ranking/contracts';
 import { getClubSeasonDetails } from '../api/client.js';
 
-type Props = { clubId: string; clubName: string; seasonId: string };
+type Props = { clubId: string; clubName: string; seasonId: string; idSuffix?: string };
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Unable to load club season details';
 }
 
-export function ClubDetails({ clubId, clubName, seasonId }: Props) {
+export function ClubDetails({ clubId, clubName, seasonId, idSuffix = 'details' }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [detail, setDetail] = useState<ClubSeasonDetailsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const panelId = `club-details-${clubId}`;
+  const panelId = `club-details-${clubId}-${idSuffix}`;
 
   useEffect(() => {
     if (!expanded) return undefined;
@@ -40,7 +40,7 @@ export function ClubDetails({ clubId, clubName, seasonId }: Props) {
     <>
       <button
         type="button"
-        className="underline"
+        className="detail-toggle"
         aria-expanded={expanded}
         aria-controls={panelId}
         onClick={() => setExpanded((value) => !value)}
@@ -49,7 +49,7 @@ export function ClubDetails({ clubId, clubName, seasonId }: Props) {
       </button>
       <section
         id={panelId}
-        className="mt-2 min-w-72 space-y-2"
+        className="detail-panel"
         aria-busy={loading}
         aria-label={`${clubName} ${seasonId} season details`}
         hidden={!expanded}
@@ -66,7 +66,7 @@ export function ClubDetails({ clubId, clubName, seasonId }: Props) {
                   {detail.status === 'partial' ? ' (partial)' : ''}
                 </p>
                 {detail.competitions.map((competition) => (
-                  <section key={competition.id} aria-label={competition.name}>
+                  <section key={competition.id} aria-label={competition.name} className="detail-group">
                     <h3 className="font-semibold">{competition.name}</h3>
                     {detail.entries.filter((entry) => entry.competition.id === competition.id).map((entry) => (
                       <p key={entry.id}>

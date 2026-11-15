@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ClubRanking } from '../src/components/ClubRanking.js';
@@ -71,7 +71,7 @@ describe('club detail expansion', () => {
     });
     const user = userEvent.setup();
     render(<ClubRanking />);
-    const expand = await screen.findByRole('button', { name: 'Show season details for Meadow FC' });
+    const expand = within(await screen.findByRole('table')).getByRole('button', { name: 'Show season details for Meadow FC' });
     expand.focus();
     await user.keyboard('{Enter}');
     expect(await screen.findByText('Elimination award')).toBeVisible();
@@ -88,7 +88,7 @@ describe('club detail expansion', () => {
     });
     const user = userEvent.setup();
     render(<ClubRanking />);
-    await user.click(await screen.findByRole('button', { name: 'Show season details for Meadow FC' }));
+    await user.click(within(await screen.findByRole('table')).getByRole('button', { name: 'Show season details for Meadow FC' }));
     expect(await screen.findByText('The club did not participate in this season.')).toBeVisible();
     expect(screen.getByText('Season points: 0')).toBeVisible();
   });
@@ -102,7 +102,7 @@ describe('club detail expansion', () => {
     const user = userEvent.setup();
     render(<ClubRanking />);
     await user.selectOptions(await screen.findByLabelText('Season'), '2023-24');
-    await user.click(await screen.findByRole('button', { name: 'Show season details for Meadow FC' }));
+    await user.click(within(await screen.findByRole('table')).getByRole('button', { name: 'Show season details for Meadow FC' }));
     expect(await screen.findByText('Participation and details unavailable.')).toBeVisible();
     expect(screen.getByText('Season points: Unavailable')).toBeVisible();
     expect(screen.queryByText('Season points: 0')).not.toBeInTheDocument();
@@ -138,10 +138,10 @@ describe('club detail expansion', () => {
 
     const user = userEvent.setup();
     render(<ClubRanking />);
-    await user.click(await screen.findByRole('button', { name: 'Show season details for Meadow FC' }));
+    await user.click(within(await screen.findByRole('table')).getByRole('button', { name: 'Show season details for Meadow FC' }));
     expect(await screen.findByText('Loading season details...')).toBeVisible();
     await user.selectOptions(screen.getByLabelText('Season'), '2023-24');
-    await screen.findByRole('button', { name: 'Show season details for Meadow FC' });
+    await within(await screen.findByRole('table')).findByRole('button', { name: 'Show season details for Meadow FC' });
     await act(async () => {
       resolveOldDetail(new Response(JSON.stringify({
         season: { id: '2026-27', label: '2026/27' }, club: { id: 'meadow-fc', name: 'Meadow FC' },

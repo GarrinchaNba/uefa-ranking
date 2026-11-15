@@ -87,16 +87,16 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
   const status = ranking?.dataStatus ?? seasons?.dataStatus;
 
   return (
-    <section aria-labelledby="association-ranking-heading" aria-busy={loading} className="space-y-4">
+    <section aria-labelledby="association-ranking-heading" aria-busy={loading} className="ranking-section space-y-4">
       <h2 id="association-ranking-heading" className="text-xl font-semibold">Global association ranking</h2>
-      <p>Five-season association coefficients from each season&apos;s association-specific coefficient input.</p>
+      <p className="ranking-intro">Five-season association coefficients from each season&apos;s association-specific coefficient input.</p>
       <DataStatus dataStatus={status} />
       {loading && <DataStatus loading />}
       {error && <DataStatus error={error} />}
       {seasons && (
-        <label className="grid w-fit gap-1">
+        <label className="season-picker">
           Season
-          <select className="rounded border p-2" value={seasonId} onChange={(event) => {
+          <select value={seasonId} onChange={(event) => {
             setRanking(null);
             setSort(null);
             chooseSeason(event.target.value);
@@ -107,11 +107,34 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
       )}
       {ranking && (
         <>
-          <p role="status">{ranking.explanation}</p>
-          {ranking.provisional && <p><strong>Provisional:</strong> current-season five-year coefficients, not an official final UEFA ranking.</p>}
+          <p role="status" className="ranking-note">{ranking.explanation}</p>
+          {ranking.provisional && <p className="ranking-note"><strong>Provisional:</strong> current-season five-year coefficients, not an official final UEFA ranking.</p>}
           {rows.length === 0 ? <p>No associations are available for this five-season period.</p> : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <>
+            <div className="mobile-sort-controls" aria-label="Sort association ranking">
+              <label>
+                Sort by season contribution
+                <select
+                  aria-label="Sort by season contribution"
+                  value={sort?.seasonId ?? ranking.seasons[4].id}
+                  onChange={(event) => setSort({ seasonId: event.target.value, direction: 'desc' })}
+                >
+                  {ranking.seasons.map((season) => <option key={season.id} value={season.id}>{season.label}</option>)}
+                </select>
+              </label>
+              <button
+                type="button"
+                aria-label={`Sort ${sort?.direction === 'asc' ? 'descending' : 'ascending'}`}
+                onClick={() => setSort((current) => ({
+                  seasonId: current?.seasonId ?? ranking.seasons[4].id,
+                  direction: current?.direction === 'asc' ? 'desc' : 'asc',
+                }))}
+              >
+                {sort?.direction === 'asc' ? 'Ascending' : 'Descending'}
+              </button>
+            </div>
+            <div className="table-scroll">
+              <table className="ranking-table">
                 <caption className="text-left font-semibold">
                   Association coefficients, {ranking.seasons[0].label}–{ranking.season.label}
                 </caption>
@@ -148,6 +171,7 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
                           associationId={row.association.id}
                           associationName={row.association.name}
                           seasonId={ranking.season.id}
+                          idSuffix="table"
                         />
                       </th>
                       {row.contributions.map((contribution) => (
@@ -158,13 +182,57 @@ export function AssociationRanking({ availableSeasons, selectedSeasonId, onSelec
                       ))}
                       <td>
                         {row.coefficient ?? 'Unavailable'}
-                        {row.reason && <p className="max-w-72 text-sm text-amber-800">{row.reason}</p>}
+                        {row.reason && <p className="reason-text">{row.reason}</p>}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            <div className="ranking-cards">
+              {rows.map((row) => (
+                <article className="ranking-card" key={row.association.id} aria-label={`${row.association.name} ranking details`}>
+                  <div className="ranking-card-heading">
+                    <div className="ranking-card-identity">
+                      <h3>{row.association.name}</h3>
+                    </div>
+                    <div className="ranking-card-rank">
+                      <strong>{row.rank ?? '—'}</strong>
+                      <span>{row.rankStatus === 'unresolved' ? 'Tie unresolved' : row.rank === null ? 'Rank unavailable' : 'Rank'}</span>
+                    </div>
+                    <div className="ranking-card-movement">
+                      Movement: <RankMovement movement={row.movement} />
+                    </div>
+                  </div>
+                  <dl className="contribution-list">
+                    {row.contributions.map((contribution) => (
+                      <div className="contribution-item" key={contribution.seasonId}>
+                        <dt>{ranking.seasons.find((season) => season.id === contribution.seasonId)?.label} contribution</dt>
+                        <dd>
+                          {contribution.coefficient ?? 'Unavailable'}
+                          {contribution.status === 'partial' && <span className="partial-label"> (partial)</span>}
+                        </dd>
+                      </div>
+                    ))}
+                    <div className="contribution-item contribution-item-primary">
+                      <dt>Five-season coefficient</dt>
+                      <dd>{row.coefficient ?? 'Unavailable'}</dd>
+                    </div>
+                  </dl>
+                  <p className="partial-label">Status: {row.status}</p>
+                  {row.reason && <p className="reason-text">{row.reason}</p>}
+                  <div className="card-detail-action">
+                    <AssociationDetails
+                      associationId={row.association.id}
+                      associationName={row.association.name}
+                      seasonId={ranking.season.id}
+                      idSuffix="card"
+                    />
+                  </div>
+                </article>
+              ))}
+            </div>
+            </>
           )}
         </>
       )}

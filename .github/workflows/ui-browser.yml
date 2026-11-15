@@ -1,0 +1,44 @@
+name: UI browser acceptance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  browser-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, brave]
+    env:
+      PLAYWRIGHT_BRAVE_PATH: /usr/bin/brave-browser
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.1
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Firefox
+        run: npx playwright install --with-deps firefox
+      - name: Install Brave
+        run: |
+          sudo apt-get install -y curl
+          sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+            https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
+            | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+          sudo apt-get update
+          sudo apt-get install -y brave-browser
+      - name: Verify target browser
+        run: |
+          if [ "${{ matrix.browser }}" = "brave" ]; then
+            "$PLAYWRIGHT_BRAVE_PATH" --version
+          else
+            npx playwright install --list | grep -q firefox
+          fi
+      - name: Run browser journeys
+        run: npm run test:e2e -w frontend -- --project=${{ matrix.browser }}

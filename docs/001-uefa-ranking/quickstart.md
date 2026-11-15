@@ -22,9 +22,9 @@ npm run dev
 
 ## Current validation scope
 
-`npm run build` type-checks and builds the contracts, backend, and frontend. `npm test` runs shared contract, backend, and frontend tests, including club/association scoring, ranking, API and view. `npm run test:e2e` exercises the club-and-country smoke journey, cross-ranking interactions, and health endpoint. Install Chromium with `npx playwright install chromium` before running it; some Linux installations may additionally require Playwright's system dependencies.
+`npm run build` type-checks and builds the contracts, backend, and frontend. `npm test` runs shared contract, backend, and frontend tests, including club/association scoring, ranking, API and view. `npm run test:e2e` runs the smoke, cross-ranking, responsive, theme and accessibility journeys in Chromium, Firefox and Brave. Install Playwright's Chromium and Firefox with `npx playwright install chromium firefox`, then install Brave; set `PLAYWRIGHT_BRAVE_PATH` if its executable is not at `/usr/bin/brave-browser` or `/usr/bin/brave`. Some Linux installations may additionally require Playwright's system dependencies.
 
-The API response shapes and error conditions are specified in [contracts/api.md](contracts/api.md), and the domain states are defined in [data-model.md](data-model.md). Synthetic MVP acceptance journeys are covered by unit, API, and Playwright tests; official-data verification and responsive/theme acceptance remain open.
+The API response shapes and error conditions are specified in [contracts/api.md](contracts/api.md), the domain states in [data-model.md](data-model.md), and the visual direction in [ui-design.md](ui-design.md). Synthetic MVP acceptance journeys and responsive/theme behavior are covered by unit, API and browser tests; official-data verification remains open.
 
 ## Implemented MVP journey
 
@@ -37,4 +37,4 @@ The API response shapes and error conditions are specified in [contracts/api.md]
 
 ## Follow-on acceptance scenarios
 
-Real-data reconstruction, official UEFA coefficient comparisons, and the responsive visual redesign remain open in [tasks.md](tasks.md). Their exact evidence requirements are listed in [missing-requirements.md](missing-requirements.md).
+Real-data reconstruction and official UEFA coefficient comparisons remain open in [tasks.md](tasks.md). Their exact evidence requirements are listed in [missing-requirements.md](missing-requirements.md).

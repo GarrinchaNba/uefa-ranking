@@ -110,7 +110,7 @@ describe('global association ranking view', () => {
     const user = userEvent.setup();
     render(<RankingTabs />);
     await user.click(await screen.findByRole('tab', { name: 'Countries' }));
-    const button = await screen.findByRole('button', { name: 'Show competition details for Albion' });
+    const button = within(await screen.findByRole('table')).getByRole('button', { name: 'Show competition details for Albion' });
     await user.click(button);
     const panel = await screen.findByRole('region', { name: 'Albion 2023-24 competition details' });
     expect(await within(panel).findByText(/Club-point subtotal: 2/)).toBeVisible();
