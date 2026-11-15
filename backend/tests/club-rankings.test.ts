@@ -28,6 +28,25 @@ describe('global club rankings', () => {
     expect(historicTown.contributions.at(-1)).toMatchObject({
       participation: 'did-not-participate', points: '0', status: 'complete',
     });
+
+  });
+
+  it('returns separately identified assumptions alongside the compatible reason summary', async () => {
+    const response = await request(app).get('/api/v1/club-rankings?seasonId=2026-27').expect(200);
+    const affected = response.body.clubs.find((row: { assumptions: { code: string }[] }) =>
+      row.assumptions.some(({ code }) => code === 'missing-or-partial-association-coefficient'));
+    expect(affected).toBeDefined();
+    expect(affected.assumptions).toContainEqual({
+      code: 'missing-or-partial-association-coefficient',
+      message: 'A missing or partial synthetic association coefficient is assumed to be 0.',
+    });
+    expect(affected.reason).toBe([...affected.reasons, ...affected.assumptions.map(
+      (assumption: { message: string }) => assumption.message,
+    )].join(' '));
+    expect(response.body.clubs.some((row: { assumptions: { code: string }[] }) =>
+      row.assumptions.some(({ code }) => code === 'partial-club-total'))).toBe(true);
+    expect(response.body.clubs.some((row: { assumptions: { code: string }[] }) =>
+      !row.assumptions.some(({ code }) => code === 'missing-or-partial-association-coefficient'))).toBe(true);
   });
 
   it('computes movement only from independently resolved current and previous ranks', async () => {

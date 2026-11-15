@@ -18,7 +18,7 @@ const club = {
     seasonId: season.id, points: '1', participation: 'participated', status: 'complete',
   })),
   clubPointsSum: '5', associationCoefficient: '5', associationMinimum: '1', coefficient: '5',
-  minimumApplied: false, status: 'complete', reason: null,
+  minimumApplied: false, status: 'complete', reason: null, reasons: [], assumptions: [],
 };
 
 function setup(detail: unknown) {

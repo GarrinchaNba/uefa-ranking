@@ -99,7 +99,9 @@ export function clubRanking(
       coefficient: input.coefficient,
       minimumApplied: input.minimumApplied,
       status: input.status,
-      reason: [...input.reasons, ...input.assumptions].join(' ') || null,
+      reason: [...input.reasons, ...input.assumptions.map(({ message }) => message)].join(' ') || null,
+      reasons: input.reasons,
+      assumptions: input.assumptions,
     };
   });
 
@@ -124,7 +126,7 @@ export function clubRanking(
     season: seasons[4],
     seasons,
     provisional: seasonId === snapshot.activeSeasonId,
-    explanation: 'Synthetic MVP ranking. Numeric assumptions are provisional and listed on each affected club; this is not a verified UEFA ranking.',
+    explanation: 'Synthetic MVP ranking. Numeric assumptions are provisional and disclosed below; this is not a verified UEFA ranking.',
     clubs,
     dataStatus: options.dataStatus,
   };

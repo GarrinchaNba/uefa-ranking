@@ -308,6 +308,35 @@ main.app-shell {
   font-variant-numeric: tabular-nums;
 }
 
+.assumption-disclosure {
+  display: inline;
+}
+
+.assumption-indicator {
+  min-width: 45px;
+  padding: 4px 12px;
+  color: var(--accent-strong);
+  font-weight: 750;
+}
+
+.assumption-tooltip {
+  display: block;
+  width: min(28ch, 100%);
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.assumption-tooltip[hidden] {
+  display: none;
+}
+
 .reason-text,
 .partial-label {
   color: var(--muted);

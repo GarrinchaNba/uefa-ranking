@@ -12,7 +12,7 @@ const row = {
   rank: 3, rankStatus: 'resolved', previousRank: 5, previousRankStatus: 'resolved', movement: 2,
   contributions: seasons.map(({ id }) => contribution(id)), clubPointsSum: '10',
   associationCoefficient: '20', associationMinimum: '4', coefficient: '10',
-  minimumApplied: false, status: 'complete', reason: null,
+  minimumApplied: false, status: 'complete', reason: null, reasons: [], assumptions: [],
 };
 const base = {
   season: seasons[4], seasons, provisional: true, explanation: 'Provisional mock',
@@ -22,6 +22,14 @@ const base = {
 describe('ranking response contracts', () => {
   it('accepts a five-season club response and a correctly signed movement', () => {
     expect(ClubRankingResponseSchema.safeParse(base).success).toBe(true);
+  });
+  it('validates structured assumption codes and their compatibility summary', () => {
+    const assumption = { code: 'partial-club-total', message: 'Partial fixture.' };
+    const partial = { ...row, status: 'partial', reason: assumption.message, assumptions: [assumption] };
+    expect(ClubRankingResponseSchema.safeParse({ ...base, clubs: [partial] }).success).toBe(true);
+    expect(ClubRankingResponseSchema.safeParse({ ...base, clubs: [{ ...partial, assumptions: [assumption, assumption] }] }).success).toBe(false);
+    expect(ClubRankingResponseSchema.safeParse({ ...base, clubs: [{ ...partial, reason: 'Different' }] }).success).toBe(false);
+    expect(ClubRankingResponseSchema.safeParse({ ...base, clubs: [{ ...partial, assumptions: [{ ...assumption, code: 'other' }] }] }).success).toBe(false);
   });
   it('rejects mismatched periods, contribution ordering and movements', () => {
     const invalid = [

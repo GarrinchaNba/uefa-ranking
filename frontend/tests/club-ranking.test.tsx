@@ -1,9 +1,9 @@
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ClubRanking } from '../src/components/ClubRanking.js';
 
-const dataStatus = { mode: 'mock', quality: 'partial', source: 'Test fixture', lastSuccessfulUpdate: null };
+const dataStatus = { mode: 'mock', quality: 'partial', source: 'Test fixture', lastSuccessfulUpdate: null } as const;
 const seasons = [
   { id: '2022-23', label: '2022/23' },
   { id: '2023-24', label: '2023/24' },
@@ -25,6 +25,7 @@ const row = (
   clubPointsSum: points.reduce((sum, value) => sum + Number(value), 0).toString(),
   associationCoefficient: '40', associationMinimum: '8', coefficient: '8', minimumApplied: true,
   status: 'partial', reason: 'Assumed fixture value for this MVP.',
+  reasons: ['Assumed fixture value for this MVP.'], assumptions: [] as { code: string; message: string }[],
 });
 const rankings = (seasonId: string) => {
   const selectedSeasons = seasonId === '2026-27' ? seasons : historicalSeasons;
@@ -140,5 +141,59 @@ describe('global club ranking view', () => {
     resolveActive(json(rankings('2026-27')));
     await waitFor(() => expect(screen.queryByText('Club coefficients, 2022/23–2026/27')).not.toBeInTheDocument());
     expect(screen.getByText('Club coefficients, 2019/20–2023/24')).toBeVisible();
+  });
+
+  it('discloses only affected assumptions without repeating the shared note in rows or cards', async () => {
+    const association = 'A missing or partial synthetic association coefficient is assumed to be 0.';
+    const partial = 'Partial synthetic club totals use the reported fixture value.';
+    const response = rankings('2026-27');
+    response.clubs[0] = {
+      ...response.clubs[0],
+      reason: `Other limitation. ${association} ${partial} Other assumption.`,
+      reasons: ['Other limitation.'],
+      assumptions: [
+        { code: 'missing-or-partial-association-coefficient', message: association },
+        { code: 'partial-club-total', message: partial },
+        { code: 'unverified-ranking-tie-break', message: 'Other assumption.' },
+      ],
+    };
+    response.clubs[1] = {
+      ...response.clubs[1],
+      reason: `Assumed fixture value for this MVP. ${partial}`,
+      assumptions: [{ code: 'partial-club-total', message: partial }],
+    };
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>().mockResolvedValue(json(response)));
+    const user = userEvent.setup();
+    render(<ClubRanking selectedSeasonId="2026-27" availableSeasons={{ activeSeasonId: '2026-27', seasons: [seasons[4]], dataStatus }} />);
+    const table = await screen.findByRole('table');
+    const affected = within(table).getByRole('row', { name: /Albion Rovers/ });
+    const other = within(table).getByRole('row', { name: /North City/ });
+    expect(screen.getAllByText(partial)).toHaveLength(1);
+    expect(screen.getByText(partial).compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(affected).queryByText(partial)).not.toBeInTheDocument();
+    expect(within(affected).getByText('Other limitation.')).toBeInTheDocument();
+    expect(within(affected).getByText('Other assumption.')).toBeInTheDocument();
+    expect(within(other).queryByRole('button', { name: /association coefficient assumption/i })).not.toBeInTheDocument();
+    const indicator = within(affected).getByRole('button', { name: /association coefficient assumption/i });
+    expect(indicator).toHaveTextContent('*');
+    expect(within(affected).queryByRole('tooltip')).not.toBeInTheDocument();
+    await user.hover(indicator);
+    expect(within(affected).getByRole('tooltip')).toHaveTextContent(association);
+    await user.unhover(indicator);
+    act(() => indicator.focus());
+    expect(within(affected).getByRole('tooltip')).toHaveTextContent(association);
+    await user.keyboard('{Escape}');
+    expect(within(affected).queryByRole('tooltip')).not.toBeInTheDocument();
+    const card = screen.getByRole('article', { name: 'Albion Rovers ranking details', hidden: true });
+    expect(within(card).getByRole('button', { name: /association coefficient assumption/i, hidden: true })).toHaveTextContent('*');
+    expect(within(card).getByText('Other limitation.')).toBeInTheDocument();
+    expect(within(card).queryByText(partial)).not.toBeInTheDocument();
+  });
+
+  it('does not show the partial fixture note when no club has that assumption', async () => {
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>().mockResolvedValue(json(rankings('2026-27'))));
+    render(<ClubRanking selectedSeasonId="2026-27" availableSeasons={{ activeSeasonId: '2026-27', seasons: [seasons[4]], dataStatus }} />);
+    await screen.findByRole('table');
+    expect(screen.queryByText('Partial synthetic club totals use the reported fixture value.')).not.toBeInTheDocument();
   });
 });

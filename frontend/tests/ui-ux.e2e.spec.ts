@@ -146,3 +146,38 @@ test('preserves access to ranking information with enlarged text', async ({ page
   await page.getByRole('button', { name: 'Show season details for Albion Rovers' }).click();
   await expect(page.getByRole('region', { name: 'Albion Rovers 2026-27 season details' })).toBeVisible();
 });
+
+test('exposes assumption indicators by hover, keyboard and touch on both layouts', async ({ page, browser }) => {
+  const message = 'A missing or partial synthetic association coefficient is assumed to be 0.';
+  const partial = 'Partial synthetic club totals use the reported fixture value.';
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const note = page.getByText(partial, { exact: true });
+  await expect(note).toHaveCount(1);
+  const table = page.getByRole('table');
+  await expect(table.getByText(partial)).toHaveCount(0);
+  const indicator = table.getByRole('button', { name: /association coefficient assumption/i }).first();
+  await indicator.hover();
+  await expect(table.getByRole('tooltip')).toContainText(message);
+  await page.mouse.move(0, 0);
+  await indicator.focus();
+  await expect(table.getByRole('tooltip')).toContainText(message);
+  await page.keyboard.press('Escape');
+  await expect(table.getByRole('tooltip')).toHaveCount(0);
+
+  const context = await browser.newContext({ viewport: { width: 320, height: 900 }, hasTouch: true });
+  const mobile = await context.newPage();
+  await mobile.goto(page.url());
+  await expect(mobile.getByText(partial, { exact: true })).toHaveCount(1);
+  const card = mobile.locator('.ranking-card').filter({
+    has: mobile.getByRole('button', { name: /association coefficient assumption/i }),
+  }).first();
+  const mobileIndicator = card.getByRole('button', { name: /association coefficient assumption/i });
+  await mobileIndicator.tap();
+  await expect(card.getByRole('tooltip')).toContainText(message);
+  expect(await mobile.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await mobileIndicator.tap();
+  await expect(card.getByRole('tooltip')).toHaveCount(0);
+  await expect(card.getByText(partial)).toHaveCount(0);
+  await context.close();
+});

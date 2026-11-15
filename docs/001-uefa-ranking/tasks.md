@@ -128,6 +128,17 @@ The exact remaining external evidence is tracked in [missing-requirements.md](mi
 - [x] T109 [US5] Extend `frontend/playwright.config.ts` and `.github/workflows/ui-browser.yml` to run the core ranking and `frontend/tests/ui-ux.e2e.spec.ts` journeys in current stable Firefox and Brave; install/use the actual Brave browser binary and fail clearly rather than silently skipping a missing target browser.
 - [x] T110 [US5] Run visual and accessibility acceptance at the viewport sizes, 200% zoom, keyboard-only operation, and both themes; verify the Firefox/Brave browser matrix, then record results and known limitations in `docs/001-uefa-ranking/testing.md`.
 
+## Phase 9: User Story 1 — Concise synthetic-assumption disclosures
+
+**Goal**: Reduce repeated text in club ranking cells while preserving accurate disclosure of fixture assumptions and all other reasons.
+
+**Independent test**: For affected and unaffected clubs in desktop and mobile layouts, verify the association assumption is represented by an asterisk with its exact explanation available on hover, keyboard focus and touch; the partial synthetic club-total explanation appears once above the ranking when applicable, not under each final coefficient. Other reasons and incomplete states remain available and no assumptions are attributed to unaffected rows.
+
+- [x] T111 [P] [US1] Add ranking and accessibility tests in `frontend/tests/club-ranking.test.tsx` and `frontend/tests/ui-ux.e2e.spec.ts` for an association-assumption asterisk and tooltip, focus/touch access, one conditional above-table club-total note, unaffected rows, multiple simultaneous reasons, and both desktop and mobile presentations.
+- [x] T112 [US1] Expose separately identifiable synthetic assumption reasons from `backend/src/domain/five-season.ts` and `backend/src/domain/club-ranking.ts` through `packages/contracts/src/api.ts`; update `backend/tests/five-season-coefficient.test.ts` and `backend/tests/club-rankings.test.ts` so the UI does not infer assumption identity by splitting or matching translated display text, and retain other reason and status information.
+- [x] T113 [US1] Update `frontend/src/components/ClubRanking.tsx` and `frontend/src/index.css` to replace only the affected association-assumption text with an asterisk whose tooltip reads `A missing or partial synthetic association coefficient is assumed to be 0.`; support hover, focus and touch, place `Partial synthetic club totals use the reported fixture value.` once immediately above the table/cards when applicable, and retain all unrelated disclosures.
+- [x] T114 [US1] Run targeted backend, component and browser checks for the disclosure changes and record the implemented behavior in `docs/001-uefa-ranking/testing.md` and `docs/001-uefa-ranking/contracts/api.md`; preserve mock/provisional and incomplete labels.
+
 ## Real-data reconstruction and reference verification
 
 - [ ] T097 Establish an accessible, authorized match-results source with qualifying, results and stages for the target seasons and competitions; establish complete participant, membership, advancement, placement and divisor-exception coverage. FBref returned HTTP 403 here; do not bypass restrictions or assume its coverage.
@@ -146,6 +157,7 @@ The exact remaining external evidence is tracked in [missing-requirements.md](mi
 - US4 tests T087–T088 can be authored independently after the foundational schemas. T089 follows T068/T082; T090 follows T070/T085/T089; T091 follows T070/T085. Implement the movement helper as a shared dependency or integrate it as soon as both engines exist; no US1/US3 checkpoint claims complete movement before T089–T090.
 - T092/T093 may be authored independently after the relevant contracts and fixtures exist; T094 follows T070/T077/T085/T086; T095 follows US1–US4 and T092–T094; T096 follows T095.
 - US5 (T103–T110) follows the US1–US4 ranking surfaces and T094 so the visual system is applied once to the complete interface. T103 and T104 are independent; T105 depends on T104; T106 depends on T104/T105; T107 follows T105/T106; T108 follows T107; T109 follows T103 and T106–T108; T110 follows T109 and all US5 implementation tasks. T095/T096 validate the core feature; T110 is the final post-redesign validation against FR-025–FR-027/SC-012–SC-014.
+- Phase 9: T111 precedes T112/T113; T113 follows T112; T114 follows T113. Deliver and validate this independently of Phase 10.
 - T097 and T098 can proceed independently; T101 follows T097; T099 follows T101 and the relevant scoring engines; T100 follows T098 and T099. T102 follows the comparison logic in T100 and the ranking contracts/views. Reference comparison requires matching the official season, period and snapshot.
 - Avoid concurrent edits to `packages/contracts/src/api.ts`, `backend/src/api/app.ts`, `frontend/src/api/client.ts`, or `frontend/src/App.tsx`; story tasks sharing those files must be integrated sequentially.
 

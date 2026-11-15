@@ -86,6 +86,17 @@ export const AssociationContributionSchema = z.object({
   }
 });
 
+export const ClubAssumptionSchema = z.object({
+  code: z.enum([
+    'missing-club-contribution',
+    'partial-club-total',
+    'missing-or-partial-association-coefficient',
+    'unverified-association-floor',
+    'unverified-ranking-tie-break',
+  ]),
+  message: z.string().min(1),
+});
+
 export const ClubRankingRowSchema = z.object({
   clubId: IdSchema, name: z.string().min(1), association: AssociationSchema.nullable(),
   ...RankFields,
@@ -97,8 +108,14 @@ export const ClubRankingRowSchema = z.object({
   minimumApplied: z.boolean().nullable(),
   status: z.enum(['complete', 'partial', 'incomplete']),
   reason: z.string().min(1).nullable(),
+  reasons: z.array(z.string().min(1)),
+  assumptions: z.array(ClubAssumptionSchema),
 }).superRefine((row, context) => {
   validateRanks(row, context);
+  if (new Set(row.assumptions.map(({ code }) => code)).size !== row.assumptions.length
+    || row.reason !== ([...row.reasons, ...row.assumptions.map(({ message }) => message)].join(' ') || null)) {
+    context.addIssue({ code: 'custom', message: 'Club reasons and assumptions must be unique and match the summary' });
+  }
   if ((row.status === 'complete' && (row.contributions.some((entry) => entry.status !== 'complete')
     || row.clubPointsSum === null || row.associationCoefficient === null || row.associationMinimum === null
     || row.coefficient === null || row.minimumApplied === null))

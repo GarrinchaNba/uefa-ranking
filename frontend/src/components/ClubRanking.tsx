@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import type { ClubRankingResponse, SeasonsResponse } from '@uefa-ranking/contracts';
 import { getClubRanking, getSeasons } from '../api/client.js';
 import { ClubDetails } from './ClubDetails.js';
@@ -25,6 +25,61 @@ function contributionOrder(left: string | null, right: string | null, direction:
   const a = toMilli(left);
   const b = toMilli(right);
   return (a < b ? -1 : a > b ? 1 : 0) * (direction === 'asc' ? 1 : -1);
+}
+
+type ClubRow = ClubRankingResponse['clubs'][number];
+
+function AssociationAssumption({ club }: { club: ClubRow }) {
+  const assumption = club.assumptions.find(({ code }) => code === 'missing-or-partial-association-coefficient');
+  const id = useId();
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  if (!assumption) return null;
+  const open = hovered || focused || pinned;
+  return (
+    <span className="assumption-disclosure"
+      onPointerEnter={(event) => { if (event.pointerType === 'mouse') setHovered(true); }}
+      onPointerLeave={(event) => { if (event.pointerType === 'mouse') setHovered(false); }}
+    >
+      <button
+        type="button"
+        className="assumption-indicator"
+        aria-label={`Association coefficient assumption for ${club.name}`}
+        aria-describedby={id}
+        onFocus={() => setFocused(true)}
+        onBlur={() => { setFocused(false); setPinned(false); }}
+        onClick={() => {
+          if (pinned) {
+            setHovered(false);
+            setFocused(false);
+            setPinned(false);
+          } else {
+            setPinned(true);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setHovered(false);
+            setFocused(false);
+            setPinned(false);
+          }
+        }}
+      >*</button>
+      <span id={id} role="tooltip" className="assumption-tooltip" hidden={!open}>
+        {assumption.message} Missing values use zero; known partial values use their reported fixture value.
+      </span>
+    </span>
+  );
+}
+
+function visibleReasons(club: ClubRow): string[] {
+  return [
+    ...club.reasons,
+    ...club.assumptions
+      .filter(({ code }) => code !== 'missing-or-partial-association-coefficient' && code !== 'partial-club-total')
+      .map(({ message }) => message),
+  ];
 }
 
 export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeasonChange }: Props) {
@@ -86,6 +141,8 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
   }, [ranking, sort]);
 
   const status = ranking?.dataStatus ?? seasons?.dataStatus;
+  const partialClubNote = rows.flatMap(({ assumptions }) => assumptions)
+    .find(({ code }) => code === 'partial-club-total')?.message;
   return (
     <section aria-labelledby="club-ranking-heading" aria-busy={loading} className="ranking-section space-y-4">
       <h2 id="club-ranking-heading" className="text-xl font-semibold">Global club ranking</h2>
@@ -132,6 +189,7 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
                 {sort?.direction === 'asc' ? 'Ascending' : 'Descending'}
               </button>
             </div>
+            {partialClubNote && <p className="ranking-note">{partialClubNote}</p>}
             <div className="table-scroll">
               <table className="ranking-table">
                 <caption className="text-left font-semibold">
@@ -185,7 +243,8 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
                           </td>
                           <td>
                             <span className="coefficient-value">{club.coefficient ?? 'Unavailable'}</span>
-                            {club.reason && <p className="reason-text">{club.reason}</p>}
+                            <AssociationAssumption club={club} />
+                            {visibleReasons(club).map((reason) => <p className="reason-text" key={reason}>{reason}</p>)}
                             {club.status === 'incomplete' && <span className="partial-label">Incomplete</span>}
                           </td>
                       </tr>
@@ -232,11 +291,11 @@ export function ClubRanking({ availableSeasons, selectedSeasonId, onSelectedSeas
                     </div>
                     <div className="contribution-item contribution-item-primary">
                       <dt>Final coefficient</dt>
-                      <dd>{club.coefficient ?? 'Unavailable'}</dd>
+                      <dd>{club.coefficient ?? 'Unavailable'} <AssociationAssumption club={club} /></dd>
                     </div>
                   </dl>
                   <p className="partial-label">Status: {club.status}</p>
-                  {club.reason && <p className="reason-text">{club.reason}</p>}
+                  {visibleReasons(club).map((reason) => <p className="reason-text" key={reason}>{reason}</p>)}
                   <div className="card-detail-action">
                     <ClubDetails clubId={club.clubId} clubName={club.name} seasonId={ranking.season.id} idSuffix="card" />
                   </div>

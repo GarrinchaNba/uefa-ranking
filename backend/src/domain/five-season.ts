@@ -1,4 +1,4 @@
-import type { RankingSnapshot } from '@uefa-ranking/contracts';
+import type { ClubRankingResponse, RankingSnapshot } from '@uefa-ranking/contracts';
 import { associationMinimum, decimalToMilli, milliToDecimal } from './decimal.js';
 import { rankingPeriods } from './periods.js';
 
@@ -20,7 +20,7 @@ export type ClubFiveSeasonCoefficient = {
   minimumApplied: boolean | null;
   status: 'complete' | 'partial' | 'incomplete';
   reasons: string[];
-  assumptions: string[];
+  assumptions: ClubRankingResponse['clubs'][number]['assumptions'];
 };
 
 /**
@@ -54,7 +54,7 @@ export function clubFiveSeasonCoefficients(
 
     const associationId = records[4]?.associationId ?? null;
     const reasons: string[] = [];
-    const assumptions: string[] = [];
+    const assumptions: ClubFiveSeasonCoefficient['assumptions'] = [];
     const clubCanBeSummed = contributions.every((entry) => entry.points !== null
       || (fixtureAssumptions && entry.participation === 'participated'));
     const clubPointsSum = clubCanBeSummed
@@ -63,10 +63,10 @@ export function clubFiveSeasonCoefficients(
       : null;
     if (clubCanBeSummed && contributions.some((entry) => entry.points === null)) {
       // FIXME(mvp-fixture-assumption): synthetic records with an unknown score are provisionally treated as zero.
-      assumptions.push('A missing synthetic club contribution is assumed to be 0.');
+      assumptions.push({ code: 'missing-club-contribution', message: 'A missing synthetic club contribution is assumed to be 0.' });
     }
     if (contributions.some((entry) => entry.status !== 'complete' && entry.points !== null)) {
-      if (fixtureAssumptions) assumptions.push('Partial synthetic club totals use the reported fixture value.');
+      if (fixtureAssumptions) assumptions.push({ code: 'partial-club-total', message: 'Partial synthetic club totals use the reported fixture value.' });
       else reasons.push('A club contribution is partial');
     }
     if (clubPointsSum === null) reasons.push('Club contributions are incomplete');
@@ -84,13 +84,13 @@ export function clubFiveSeasonCoefficients(
     if (associationCanBeSummed && associationRecords.some((record) =>
       record?.points === null || record?.status !== 'complete')) {
       // FIXME(mvp-fixture-assumption): synthetic missing association seasons are provisionally treated as zero.
-      assumptions.push('A missing or partial synthetic association coefficient is assumed to be 0.');
+      assumptions.push({ code: 'missing-or-partial-association-coefficient', message: 'A missing or partial synthetic association coefficient is assumed to be 0.' });
     }
     if (associationCoefficient === null) reasons.push('Association coefficient inputs are incomplete');
     const floorSupported = rule?.clubScoring === 'verified';
     if (!floorSupported && fixtureAssumptions) {
       // FIXME(mvp-rule-assumption): mock MVP applies the stated 20% floor pending rule verification for this period.
-      assumptions.push('The 20% association floor is provisionally applied for this synthetic period.');
+      assumptions.push({ code: 'unverified-association-floor', message: 'The 20% association floor is provisionally applied for this synthetic period.' });
     } else if (!floorSupported) {
       reasons.push('Club floor rule is unsupported for this period');
     }
@@ -101,7 +101,7 @@ export function clubFiveSeasonCoefficients(
     const coefficient = complete ? (minimumApplied ? floor : clubPointsSum) : null;
     if (rule?.ranking !== 'verified' && fixtureAssumptions) {
       // FIXME(mvp-tie-break-assumption): the mock ranking uses annual contributions while the historical tie-break mapping is unresolved.
-      assumptions.push('Historical tie-break behavior is assumed for this synthetic ranking.');
+      assumptions.push({ code: 'unverified-ranking-tie-break', message: 'Historical tie-break behavior is assumed for this synthetic ranking.' });
     } else if (rule?.ranking !== 'verified') {
       reasons.push('Historical ranking tie-break rules are unsupported');
     }

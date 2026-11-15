@@ -70,13 +70,38 @@ describe('club five-season coefficients', () => {
     unknown.status = 'missing';
     const fixtureResult = clubFiveSeasonCoefficients(snapshot, '2026-27').find((row) => row.clubId === 'meadow-fc')!;
     expect(fixtureResult).toMatchObject({ associationCoefficient: '2', coefficient: '5', status: 'partial' });
-    expect(fixtureResult.assumptions).toContain('A missing or partial synthetic association coefficient is assumed to be 0.');
+    expect(fixtureResult.assumptions).toContainEqual({
+      code: 'missing-or-partial-association-coefficient',
+      message: 'A missing or partial synthetic association coefficient is assumed to be 0.',
+    });
+
     snapshot.clubSeasons.find((record) => record.clubId === 'north-city' && record.seasonId === '2018-19')!.sourceId = 'imported-source';
     expect(clubFiveSeasonCoefficients(snapshot, '2026-27').find((row) => row.clubId === 'meadow-fc'))
       .toMatchObject({ associationCoefficient: null, coefficient: null, status: 'incomplete' });
     const unsupported = clubFiveSeasonCoefficients(fixture(), '2025-26').find((row) => row.clubId === 'meadow-fc')!;
     expect(unsupported.status).toBe('partial');
-    expect(unsupported.assumptions).toContain('The 20% association floor is provisionally applied for this synthetic period.');
+    expect(unsupported.assumptions).toContainEqual({
+      code: 'unverified-association-floor',
+      message: 'The 20% association floor is provisionally applied for this synthetic period.',
+    });
+  });
+
+  it('identifies simultaneous assumptions without replacing a known partial association value', () => {
+    const snapshot = fixture();
+    const partialClub = snapshot.clubSeasons.find((record) =>
+      record.clubId === 'meadow-fc' && record.seasonId === '2024-25')!;
+    partialClub.status = 'partial';
+    const partialAssociation = snapshot.associationSeasons.find((record) =>
+      record.associationId === 'island' && record.seasonId === '2024-25')!;
+    partialAssociation.points = '3';
+    partialAssociation.status = 'partial';
+    const result = clubFiveSeasonCoefficients(snapshot, '2026-27').find((row) => row.clubId === 'meadow-fc')!;
+    expect(result.associationCoefficient).toBe('5');
+    expect(result.assumptions.map(({ code }) => code)).toEqual(expect.arrayContaining([
+      'partial-club-total', 'missing-or-partial-association-coefficient',
+    ]));
+    const unaffected = clubFiveSeasonCoefficients(fixture(), '2026-27').find((row) => row.clubId === 'meadow-fc')!;
+    expect(unaffected.assumptions).toEqual([]);
   });
 
   it('rejects unknown seasons and does not apply the floor when it equals the club sum', () => {

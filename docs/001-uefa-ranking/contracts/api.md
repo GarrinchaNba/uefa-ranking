@@ -27,10 +27,11 @@ Response: `{ season, seasons, provisional, explanation, clubs, dataStatus }` whe
 - `clubId`, `name`, selected-season `association` (`{ id, name } | null`), rank fields above;
 - five `{ seasonId, points: string | null, participation: "participated" | "did-not-participate" | "unknown", status: "complete" | "partial" | "missing" }` contributions;
 - `clubPointsSum`, `associationCoefficient`, `associationMinimum`, and `coefficient` as decimal strings or null; `minimumApplied: boolean | null`, `status: "complete" | "partial" | "incomplete"`, and `reason: string | null`.
+- `reasons: string[]` and `assumptions: [{ code, message }]` separate limitations from uniquely coded fixture assumptions. Codes are `missing-club-contribution`, `partial-club-total`, `missing-or-partial-association-coefficient`, `unverified-association-floor`, and `unverified-ranking-tie-break`. The existing `reason` remains their ordered, space-joined summary (or null); clients can use codes without parsing message text.
 
 The calculation uses the 20% club floor. The mock provider's explicitly tagged synthetic fixture may substitute zero for missing numeric inputs and use assumed historical ranking tie-break behavior; these assumptions are returned in `reason` and have corresponding `FIXME(mvp-...)` comments in the calculation code. Non-fixture missing competitors prevent definite ranks. Eligible historical-only clubs remain present. Exact unresolved ties are not ordered by club ID.
 
-The UI defaults to the active season, labels the active view provisional, and sorts locally by each displayed contribution. The API also supports contribution sorting; returned `rank` and `movement` remain unchanged.
+The UI defaults to the active season, labels the active view provisional, and sorts locally by each displayed contribution. For an affected club the association assumption is an asterisk with an accessible hover/focus/touch disclosure; a shared note immediately above the ranking explains partial synthetic club totals when applicable. Other reasons remain visible. Missing association values are substituted with zero, while non-null partial association values use their reported fixture value; the tooltip clarifies this distinction despite the legacy assumption wording. The API also supports contribution sorting; returned `rank` and `movement` remain unchanged.
 
 ## GET /api/v1/clubs/:clubId/season-details
 

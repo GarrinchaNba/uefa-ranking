@@ -57,3 +57,11 @@ Validation run from the project root:
 | Responsive/theme/contrast acceptance | Passed at all five required widths and both themes; no page-level horizontal overflow; color pairs meet tested WCAG AA thresholds |
 
 Phase 8 tasks T103–T110 are complete. Browser checks use Playwright's Firefox distribution and the installed Brave binary; the CI workflow installs both and explicitly fails if Brave is missing. Acceptance covers CSS text enlargement at the specified zoom-equivalent viewport, not operating-system magnification or assistive technology output. Real-data reconstruction, official UEFA coefficient comparisons and their associated rule-evidence limitations remain open as documented in [missing-requirements.md](missing-requirements.md).
+
+## Phase 9 synthetic-assumption disclosures
+
+Club ranking rows now expose coded assumptions separately from other limitations, retaining the existing combined API reason. An affected association-coefficient assumption appears as an asterisk with a hover, keyboard-focus and touch disclosure; Escape dismisses it. Partial synthetic club-total wording appears once above the table or cards when needed. Other reasons and incomplete states remain visible. The disclosure clarifies that missing association inputs use zero while known partial values retain their reported fixture values; scoring and ranking are unchanged.
+
+Validation from the project root: `npm run build` passed; `npm test` passed 2 shared contract, 90 backend and 25 frontend tests; `npm run test:e2e` passed 24 journeys across Chromium, Firefox and Brave. These include affected/unaffected rows, simultaneous reasons, the conditional shared note, both responsive presentations, hover, keyboard and touch. Actual screen-reader output was not tested.
+
+Phase 9 tasks T111–T114 are complete. Competition detail tables remain Phase 10 work.
