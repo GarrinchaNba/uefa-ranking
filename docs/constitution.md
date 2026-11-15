@@ -41,6 +41,8 @@ Build a user-friendly application that presents global UEFA club and association
 - Add focused tests for points calculations, stage alignment, country totals, and data transformations as those behaviors are implemented.
 - Validate the smallest relevant test/build checks for each change and record any limitations.
 - Do not claim real-time behavior until a live data source and its update behavior have been integrated and verified.
+- At the end of each implementation phase, commit that phase's validated changes in a dedicated commit and push it to the configured upstream branch; do not combine separate phases.
+- Never amend an existing commit or force-push. If a safe push is blocked by repository configuration, authentication, or network availability, retain the dedicated local commit when possible and report the blocker.
 
 ## Technology direction
 
