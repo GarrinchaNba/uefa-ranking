@@ -35,25 +35,6 @@ export const SeasonsResponseSchema = z.object({
   }
 });
 
-export const AssociationsResponseSchema = z.object({
-  seasonId: SeasonIdSchema,
-  associations: z.array(AssociationSchema),
-  dataStatus: DataStatusSchema,
-});
-
-export const SeasonRankingResponseSchema = z.object({
-  season: SeasonSchema,
-  association: AssociationSchema,
-  clubs: z.array(z.object({
-    clubId: IdSchema,
-    name: z.string().min(1),
-    league: z.object({ id: IdSchema, name: z.string().min(1) }).nullable(),
-    total: DecimalStringSchema.nullable(),
-    totalStatus: z.enum(['complete', 'partial']),
-  })),
-  dataStatus: DataStatusSchema,
-});
-
 const RankStatusSchema = z.enum(['resolved', 'unresolved', 'incomplete']);
 const RankFields = {
   rank: z.number().int().safe().positive().nullable(),
@@ -349,5 +330,3 @@ export type DecimalString = z.infer<typeof DecimalStringSchema>;
 export type DataStatus = z.infer<typeof DataStatusSchema>;
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>;
 export type SeasonsResponse = z.infer<typeof SeasonsResponseSchema>;
-export type AssociationsResponse = z.infer<typeof AssociationsResponseSchema>;
-export type SeasonRankingResponse = z.infer<typeof SeasonRankingResponseSchema>;

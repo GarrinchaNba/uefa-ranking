@@ -100,11 +100,11 @@ The exact remaining external evidence is tracked in [missing-requirements.md](mi
 
 ## Phase 7: Cross-cutting validation and migration
 
-- [ ] T092 [P] Add Playwright journey in `frontend/tests/rankings.e2e.spec.ts` covering both tabs, five labelled seasons, historical selection, floor, expansion, transfers, sorting, movement, keyboard access, missing inputs and API error states; update `frontend/tests/smoke.e2e.spec.ts` to the new UI.
-- [ ] T093 [P] Add fixture/contract validation in `backend/tests/mock-fixtures.test.ts` and `packages/contracts/tests/contracts.test.ts` for deterministic outputs, supported-rule references, pre-2022 inputs, both windows, complete-detail reconciliation and distinct association calculations.
-- [ ] T094 Migrate/remove obsolete interim country-only routes and UI only after all callers and tests are migrated; update `backend/src/api/app.ts`, `frontend/src/components/SeasonRanking.tsx`, and affected tests without removing unrelated functionality.
-- [ ] T095 Run `npm run build`, `npm test`, `npm run test:e2e` and the scenarios in `docs/001-uefa-ranking/quickstart.md`; update `docs/001-uefa-ranking/testing.md` with results and any unsupported-rule/data limitations, and reconcile `docs/001-uefa-ranking/contracts/api.md` with implemented responses.
-- [ ] T096 Review `docs/001-uefa-ranking/spec.md`, `docs/001-uefa-ranking/plan.md`, `docs/constitution.md` and implemented core behavior for FR-001–FR-024/SC-001–SC-011; record remaining gaps in `docs/001-uefa-ranking/testing.md` rather than claiming completion.
+- [x] T092 [P] Add Playwright journey in `frontend/tests/rankings.e2e.spec.ts` covering both tabs, five labelled seasons, historical selection, floor, expansion, transfers, sorting, movement, keyboard access, missing inputs and API error states; update `frontend/tests/smoke.e2e.spec.ts` to the new UI.
+- [x] T093 [P] Add fixture/contract validation in `backend/tests/mock-fixtures.test.ts` and `packages/contracts/tests/contracts.test.ts` for deterministic outputs, supported-rule references, pre-2022 inputs, both windows, complete-detail reconciliation and distinct association calculations.
+- [x] T094 Migrate/remove obsolete interim country-only routes and UI only after all callers and tests are migrated; update `backend/src/api/app.ts`, `frontend/src/components/SeasonRanking.tsx`, and affected tests without removing unrelated functionality.
+- [x] T095 Run `npm run build`, `npm test`, `npm run test:e2e` and the scenarios in `docs/001-uefa-ranking/quickstart.md`; update `docs/001-uefa-ranking/testing.md` with results and any unsupported-rule/data limitations, and reconcile `docs/001-uefa-ranking/contracts/api.md` with implemented responses.
+- [x] T096 Review `docs/001-uefa-ranking/spec.md`, `docs/001-uefa-ranking/plan.md`, `docs/constitution.md` and implemented core behavior for FR-001–FR-024/SC-001–SC-011; record remaining gaps in `docs/001-uefa-ranking/testing.md` rather than claiming completion.
 
 ## Phase 8: User Story 5 — Clear, responsive ranking experience (P1)
 

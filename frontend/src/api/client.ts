@@ -1,19 +1,15 @@
 import {
   ApiErrorResponseSchema,
-  AssociationsResponseSchema,
   AssociationRankingResponseSchema,
   AssociationSeasonDetailsResponseSchema,
   ClubRankingResponseSchema,
   ClubSeasonDetailsResponseSchema,
   SeasonsResponseSchema,
-  SeasonRankingResponseSchema,
-  type AssociationsResponse,
   type AssociationRankingResponse,
   type AssociationSeasonDetailsResponse,
   type ClubRankingResponse,
   type ClubSeasonDetailsResponse,
   type SeasonsResponse,
-  type SeasonRankingResponse,
 } from '@uefa-ranking/contracts';
 import { z } from 'zod';
 
@@ -66,23 +62,6 @@ async function request<T>(
 
 export function getSeasons(fetcher: typeof fetch = fetch): Promise<SeasonsResponse> {
   return request('/api/v1/seasons', SeasonsResponseSchema, fetcher);
-}
-
-export function getAssociations(
-  seasonId: string,
-  fetcher: typeof fetch = fetch,
-): Promise<AssociationsResponse> {
-  const query = new URLSearchParams({ seasonId });
-  return request(`/api/v1/associations?${query.toString()}`, AssociationsResponseSchema, fetcher);
-}
-
-export function getSeasonRanking(
-  seasonId: string,
-  associationId: string,
-  fetcher: typeof fetch = fetch,
-): Promise<SeasonRankingResponse> {
-  const query = new URLSearchParams({ seasonId, associationId });
-  return request(`/api/v1/season-rankings?${query.toString()}`, SeasonRankingResponseSchema, fetcher);
 }
 
 export function getClubRanking(

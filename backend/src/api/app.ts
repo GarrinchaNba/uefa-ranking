@@ -3,8 +3,6 @@ import { errorHandler, notFoundHandler } from './errors.js';
 import { MockRankingDataProvider } from '../providers/mock-provider.js';
 import type { RankingDataProvider } from '../providers/provider.js';
 import { seasonsRouter } from './seasons.js';
-import { associationsRouter } from './associations.js';
-import { seasonRankingsRouter } from './season-rankings.js';
 import { clubRankingsRouter } from './club-rankings.js';
 import { clubDetailsRouter } from './club-details.js';
 import { associationRankingsRouter } from './association-rankings.js';
@@ -34,9 +32,8 @@ export function createApp(provider: RankingDataProvider = new MockRankingDataPro
     response.json({ status: 'ok' });
   });
 
-  app.use('/api/v1', seasonsRouter(provider), associationsRouter(provider), seasonRankingsRouter(provider),
-    clubRankingsRouter(provider), clubDetailsRouter(provider), associationRankingsRouter(provider),
-    associationDetailsRouter(provider));
+  app.use('/api/v1', seasonsRouter(provider), clubRankingsRouter(provider), clubDetailsRouter(provider),
+    associationRankingsRouter(provider), associationDetailsRouter(provider));
   app.use(notFoundHandler);
   app.use(errorHandler);
   return app;
